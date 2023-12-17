@@ -214,3 +214,58 @@ A short paper describing LIDA (Accepted at ACL 2023 Conference) is available [he
 ```
 
 LIDA builds on insights in automatic generation of visualization from an earlier paper - [Data2Vis: Automatic Generation of Data Visualizations Using Sequence to Sequence Recurrent Neural Networks](https://arxiv.org/abs/1804.03126).
+# Load the git library
+require 'git'
+
+# Create a new repository object
+repo = Git::Repository.new("https://github.com/Delightai6881")
+
+# Get the number of files and lines in the repository
+num_files = repo.size
+num_lines = repo.stat[:added] + repo.stat[:deleted]
+
+# Get the number of commits and authors in the repository
+num_commits = repo.commits.size
+num_authors = repo.authors.size
+
+# Get the activity statistics for each author and date range
+activity_stats = repo.activity.stats(num_authors: num_authors, num_commits: num_commits)
+
+# Print the results to the standard output
+puts "Number of files: #{num_files}"
+puts "Number of lines: #{num_lines}"
+puts "Number of commits: #{num_commits}"
+puts "Number of authors: #{num_authors}"
+puts "Activity statistics:"
+activity_stats.each do |author, stats|
+  puts "- #{author}:"
+  stats.each do |key, value|
+    puts "- #{key}: #{value}"
+  end
+end
+
+# Create a new graph object to visualize the commits and branches
+graph = Git::Graph.new(repo)
+
+# Get the number of branches and commits in each branch
+num_branches = graph.branches.size
+num_commits_per_branch = graph.commits.size
+
+# Get the commit history for each branch and date range
+commit_history = graph.commit_history(num_branches: num_branches)
+
+# Print the results to the standard output
+puts "Number of branches: #{num_branches}"
+puts "Number of commits per branch:"
+commit_history.each do |branch, stats|
+  puts "- #{branch}:"
+  stats.each do |key, value|
+    puts "- #{key}: #{value}"
+  end
+end
+
+# Create a new diagram object to visualize the commit history as a tree diagram
+diagram = Git::Diagram.new(graph)
+
+# Save the diagram as an image file with a custom name and format
+diagram.save("commit_history.png", format: :png)
